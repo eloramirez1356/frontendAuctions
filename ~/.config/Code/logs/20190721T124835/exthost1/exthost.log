@@ -1,0 +1,24 @@
+[2019-07-21 12:48:38.596] [exthost] [info] extension host started
+[2019-07-21 12:48:38.622] [exthost] [info] ExtensionService#_doActivateExtension vscode.debug-auto-launch {"startup":true,"activationEvent":"*"}
+[2019-07-21 12:48:38.622] [exthost] [info] ExtensionService#loadCommonJSModule /snap/code/11/usr/share/code/resources/app/extensions/debug-auto-launch/dist/extension
+[2019-07-21 12:48:38.628] [exthost] [info] ExtensionService#_doActivateExtension vscode.emmet {"startup":true,"activationEvent":"*"}
+[2019-07-21 12:48:38.628] [exthost] [info] ExtensionService#loadCommonJSModule /snap/code/11/usr/share/code/resources/app/extensions/emmet/dist/extension
+[2019-07-21 12:48:38.650] [exthost] [info] ExtensionService#_doActivateExtension vscode.git {"startup":true,"activationEvent":"*"}
+[2019-07-21 12:48:38.650] [exthost] [info] ExtensionService#loadCommonJSModule /snap/code/11/usr/share/code/resources/app/extensions/git/dist/main
+[2019-07-21 12:48:38.794] [exthost] [info] ExtensionService#_doActivateExtension vscode.merge-conflict {"startup":true,"activationEvent":"*"}
+[2019-07-21 12:48:38.794] [exthost] [info] ExtensionService#loadCommonJSModule /snap/code/11/usr/share/code/resources/app/extensions/merge-conflict/dist/extension
+[2019-07-21 12:48:38.805] [exthost] [info] eager extensions activated
+[2019-07-21 12:49:43.598] [exthost] [info] extension host started
+[2019-07-21 12:49:43.622] [exthost] [info] ExtensionService#_doActivateExtension vscode.debug-auto-launch {"startup":true,"activationEvent":"*"}
+[2019-07-21 12:49:43.622] [exthost] [info] ExtensionService#loadCommonJSModule /snap/code/11/usr/share/code/resources/app/extensions/debug-auto-launch/dist/extension
+[2019-07-21 12:49:43.625] [exthost] [info] ExtensionService#_doActivateExtension vscode.emmet {"startup":true,"activationEvent":"*"}
+[2019-07-21 12:49:43.625] [exthost] [info] ExtensionService#loadCommonJSModule /snap/code/11/usr/share/code/resources/app/extensions/emmet/dist/extension
+[2019-07-21 12:49:43.644] [exthost] [info] ExtensionService#_doActivateExtension vscode.git {"startup":true,"activationEvent":"*"}
+[2019-07-21 12:49:43.644] [exthost] [info] ExtensionService#loadCommonJSModule /snap/code/11/usr/share/code/resources/app/extensions/git/dist/main
+[2019-07-21 12:49:43.767] [exthost] [info] ExtensionService#_doActivateExtension vscode.merge-conflict {"startup":true,"activationEvent":"*"}
+[2019-07-21 12:49:43.767] [exthost] [info] ExtensionService#loadCommonJSModule /snap/code/11/usr/share/code/resources/app/extensions/merge-conflict/dist/extension
+[2019-07-21 12:49:43.778] [exthost] [info] eager extensions activated
+[2019-07-21 12:50:11.618] [exthost] [info] ExtensionService#_doActivateExtension vscode.typescript-language-features {"startup":false,"activationEvent":"onLanguage:javascript"}
+[2019-07-21 12:50:11.618] [exthost] [info] ExtensionService#loadCommonJSModule /snap/code/11/usr/share/code/resources/app/extensions/typescript-language-features/dist/extension
+[2019-07-21 12:53:05.980] [exthost] [info] ExtensionService#_doActivateExtension vscode.extension-editing {"startup":false,"activationEvent":"onLanguage:typescript"}
+[2019-07-21 12:53:05.980] [exthost] [info] ExtensionService#loadCommonJSModule /snap/code/11/usr/share/code/resources/app/extensions/extension-editing/dist/extension

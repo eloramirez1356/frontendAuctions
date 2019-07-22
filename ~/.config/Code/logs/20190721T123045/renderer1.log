@@ -1,0 +1,2 @@
+[2019-07-21 12:33:15.134] [renderer1] [error] Error: [File Watcher (node.js)] Error: ENOENT: no such file or directory, stat '/home/eloy/Documents/reactAuctionWeb/auctions-portal/.vscode'
+[2019-07-21 12:33:15.134] [renderer1] [error] [File Watcher (node.js)] Error: ENOENT: no such file or directory, stat '/home/eloy/Documents/reactAuctionWeb/auctions-portal/.vscode'
