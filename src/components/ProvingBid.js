@@ -46,7 +46,7 @@ class ProvingBid extends Component {
             (async () => {
                 console.log("Justo antes de bid prover");
                 const accounts = await web3.eth.getAccounts();
-                auctionContract.methods.bidProver(web3.utils.fromAscii(this.state.bidHashedSent), this.state.encryptedBid, this.state.hashZokrates1, this.state.hashZokrates2).send({from: accounts[0]}, function(error, result){
+                auctionContract.methods.bidProver(this.state.bidHashedSent, this.state.encryptedBid, this.state.hashZokrates1, this.state.hashZokrates2).send({from: accounts[0], gas:3000000}, function(error, result){
                     if(!error){
                         alert("You have proved your transaction successfully and you participate in the bid " + result);
                         console.log(auctionContract.methods.getHashesZokrates(0).call());

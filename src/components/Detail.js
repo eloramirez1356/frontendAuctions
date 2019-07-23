@@ -17,7 +17,7 @@ class Detail extends Component {
             showBidModal:false,
             showProvingBidModal:false, 
         };
-        this.web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
+        this.web3 = new Web3(Web3.givenProvider || "http://localhost:7545");
         this.handleBid = this.handleBid.bind(this);
         this.handleCloseBid = this.handleCloseBid.bind(this);
         this.handleProvingBid = this.handleProvingBid.bind(this);
