@@ -94,9 +94,14 @@ text-align: center;
 50% { -webkit-filter: blur(5px);}
 100% { -webkit-filter: blur(0px);}
 }
-.preview-title{
+.preview-title, .preview-bidding-period, .preview-proving-period{
     padding:10px;
 }
+
+.preview-bidding-period, .preview-proving-period{
+    font-size: 15px;
+}
+
 /** DETAIL **/
 
 .detail-container{
@@ -204,3 +209,27 @@ input[type=submit]:disabled,input[type=button]:disabled {
     text-decoration: none;
     cursor: pointer;
 }
+
+/* Table Styles */
+#simple-board {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: auto;
+  }
+  
+  #simple-board td, #simple-board th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  #simple-board tr:nth-child(even){background-color: #f2f2f2;}
+  
+  #simple-board tr:hover {background-color: #ddd;}
+  
+  #simple-board th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+  }
