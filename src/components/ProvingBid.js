@@ -80,7 +80,7 @@ class ProvingBid extends Component {
         return (<div className="modal">
             <div className="modal-content">
                 <span className="close" onClick={onClose(false)}>&times;</span>
-                <h2>Placing a bid</h2>
+                <h2>Proving you have bid</h2>
                 { showSending && (<span className="success"> Enviando... </span>)}
                 { hasError && (<div className="error"> Some fields are empty or contain an wrong values. </div>)}
                 <form>

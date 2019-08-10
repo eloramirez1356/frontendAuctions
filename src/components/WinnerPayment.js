@@ -41,10 +41,10 @@ class WinnerPayment extends Component {
                 console.log(winnerBid.toString());
                 auctionContract.methods.paymentOperations().send({from: accounts[0],to: this.props.contractAddress, value: web3.utils.toWei(winnerBid.toString(), "wei"), gas:3000000}, function(error, result){
                     if(!error){
-                        alert("You have proved your transaction successfully and you participate in the bid " + result);
+                        alert("Congrats! You have won the auction and have paid the beneficiary correctly! This is your tx which confirms it: " + result);
                         //console.log(auctionContract.methods.getHashesZokrates(0).call());
                     }else{
-                        alert("You have not proved your transaction successfully and you do not participate in the bid because of the following error: " + error);
+                        alert("Are you the winner? Something happened: " + error);
                     }
                 });
               })().then(onClose(true));

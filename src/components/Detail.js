@@ -24,6 +24,13 @@ class Detail extends Component {
             showProvingProofOfWinnerModal:false,
             showWinnerPaymentModal: false,
             showTableWithBidsForAuctioneer:false,
+            biddingHash:'',
+            encryptedBidPk:'',
+            hashZok1:'',
+            hashZok2:'',
+            winner: '',
+            biggestBid:'',
+            
         };
         this.web3 = new Web3(Web3.givenProvider || "http://localhost:7545");
         this.handleBid = this.handleBid.bind(this);
@@ -60,12 +67,16 @@ class Detail extends Component {
         e.preventDefault();
         this.setState({showBidModal:true});
     }
-    handleCloseBid(reload){
+    handleCloseBid(reload,hashedBid,encryptedBid,hashZok1,hashZok2){
         return () => {
             if(reload){
                 this.setState({
                     isLoading:true, 
-                    showBidModal: false
+                    showBidModal: false,
+                    biddingHash: hashedBid,
+                    encryptedBidPk: encryptedBid,
+                    hashZok1:hashZok1,
+                    hashZok2:hashZok2,
                 });
                 getAuctions().then(data => this
                     .setState({auctions:data, isLoading:false, showBidModal:false}))
@@ -75,6 +86,7 @@ class Detail extends Component {
             }
         }
     }
+
 
     handleProvingBid(e){
         e.preventDefault();
@@ -101,12 +113,14 @@ class Detail extends Component {
         this.setState({showProvingProofOfWinnerModal:true});
     }
 
-    handleCloseProvingProofOfWinnerModal(reload){
+    handleCloseProvingProofOfWinnerModal(reload, winner){
         return () => {
             if(reload){
                 this.setState({
                     isLoading:true, 
-                    showProvingProofOfWinnerModal: false
+                    showProvingProofOfWinnerModal: false,
+                    winner: winner,
+
                 });
                 getAuctions().then(data => this
                     .setState({auctions:data, isLoading:false, showProvingProofOfWinnerModal:false}))
@@ -138,6 +152,10 @@ class Detail extends Component {
         }
     }
 
+    handleWinnerAndBiggestBid(winner, biggestBid){
+        this.setState({winner:winner, biggestBid:biggestBid});
+    }
+
     retrieveBids(e){
         e.preventDefault();
         const { auction } = this.state;
@@ -165,7 +183,7 @@ class Detail extends Component {
 
 
     render(){
-        const { isLoading, error, auction, showTableWithBidsForAuctioneer, allInfoBids } = this.state;
+        const { isLoading, error, auction, showTableWithBidsForAuctioneer, allInfoBids, biddingHash, encryptedBidPk, hashZok1, hashZok2, winner, biggestBid, account} = this.state;
         const explanationForBidding = <div>
                 <p>The procedure for bidding is the following: </p>
                 <ol>
@@ -191,21 +209,24 @@ class Detail extends Component {
                     <h2 className="detail-title">{auction.title}</h2>
                     <p>{auction.description}</p>
                     {(showTableWithBidsForAuctioneer) ? (<TableWithBids retrievedBids={allInfoBids}/>) : null}
-                    {(this.state.account != auction.auctioneer) ? explanationForBidding : null}
-                    {(this.state.account != auction.auctioneer) ? <input type="button" onClick={this.handleBid} value="Bid" className="detail-button"/> : null}
-                    {(this.state.account != auction.auctioneer) ? <input type="button" onClick={this.handleProvingBid} value="Prove your bid" className="detail-button"/> : null}
-                    {((this.state.account == auction.auctioneer) && (!showTableWithBidsForAuctioneer)) ? <input type="button" onClick={this.retrieveBids} value="Retrieve bids" className="detail-button"/> : null }
-                    {(this.state.account == auction.auctioneer) ? <input type="button" onClick={this.handleProvingProofOfWinner} value="Submit proof of Winner" className="detail-button"/> : null }
-                    {(this.state.account != auction.auctioneer) ? <input type="button" onClick={this.handleWinnerPayment} value="Winner Payment" className="detail-button"/> : null}
+                    {(account != auction.auctioneer && (biddingHash == '')) ? explanationForBidding : null}
+                    {(winner != '') ? <div><label>The winner address is: </label><p>{winner} bidding the amount of {biggestBid}</p></div> : null}
+                    {(account != auction.auctioneer && (biddingHash == '')) ? <input type="button" onClick={this.handleBid} value="Bid" className="detail-button"/> : null}
+                    {(account != auction.auctioneer && biddingHash != '') ? <div><p>Your hashed bid and data are these:</p><label>Hashed bid: {biddingHash}</label><label>Encrypted bid: </label><p>{encryptedBidPk}</p><label>Hash ZoKrates 1: </label><p>{hashZok1}</p> <label>Hash ZoKrates 2: </label><p>{hashZok2}</p><p>Save them for proving it in the next period.</p></div> : null}
+                    {(account != auction.auctioneer) ? <input type="button" onClick={this.handleProvingBid} value="Prove your bid" className="detail-button"/> : null}
+                    {((account == auction.auctioneer) && (!showTableWithBidsForAuctioneer)) ? <input type="button" onClick={this.retrieveBids} value="Retrieve bids" className="detail-button"/> : null }
+                    {(account == auction.auctioneer) ? <input type="button" onClick={this.handleProvingProofOfWinner} value="Submit proof of Winner" className="detail-button"/> : null }
+                    {(account != auction.auctioneer && winner!='') ? <input type="button" onClick={this.handleWinnerPayment} value="Are you the winner?" className="detail-button"/> : null}
                 </div>
             </div>
-            {this.state.isConnected ? 'Connected to local node':'Not Connected'}
+            
             { this.state.showBidModal && (<Bid onClose={this.handleCloseBid} web3={this.web3} contractAddress={auction.contractAddress} contractAbi={auction.abi}/>)}
             { this.state.showProvingBidModal && (<ProvingBid onClose={this.handleCloseProvingBid} web3={this.web3} contractAddress={auction.contractAddress} contractAbi={auction.abi}/>)}
-            { this.state.showProvingProofOfWinnerModal && (<ProvingProofOfWinner onClose={this.handleCloseProvingProofOfWinnerModal} web3={this.web3} contractAddress={auction.contractAddress} contractAbi={auction.abi}/>)}
+            { this.state.showProvingProofOfWinnerModal && (<ProvingProofOfWinner passInfo={this.handleWinnerAndBiggestBid} onClose={this.handleCloseProvingProofOfWinnerModal} web3={this.web3} contractAddress={auction.contractAddress} contractAbi={auction.abi}/>)}
             { this.state.showWinnerPaymentModal && (<WinnerPayment onClose={this.handleCloseWinnerPayment} web3={this.web3} contractAddress={auction.contractAddress} contractAbi={auction.abi}/>)}
         </React.Fragment>)
     }
 }
+/*{this.state.isConnected ? 'Connected to local node':'Not Connected'}*/
 
 export default withRouter(Detail);

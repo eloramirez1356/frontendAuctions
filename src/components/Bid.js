@@ -35,27 +35,29 @@ class Bid extends Component {
     handleBid(e){
         e.preventDefault();
         const { onClose } = this.props;
+        const { encryptedBid, hashZokrates1, hashZokrates2 } = this.state;
         const web3 = this.props.web3;
         const parsedAbi = JSON.parse(this.props.contractAbi);
         const auctionContract = new web3.eth.Contract(parsedAbi, this.props.contractAddress);
+        var hashBid = web3.utils.keccak256(web3.eth.abi.encodeParameters(['string', 'string', 'string'],[this.state.encryptedBid, this.state.hashZokrates1, this.state.hashZokrates2]));
         if(this.validation(this.state)){
             this.setState({showSending:true});
             //console.log(web3.utils.randomHex(32));
-            console.log(web3.utils.keccak256(web3.eth.abi.encodeParameters(['string', 'string', 'string'],[this.state.encryptedBid, this.state.hashZokrates1, this.state.hashZokrates2])));
+            console.log(hashBid);
             (async () => {
                 const accounts = await web3.eth.getAccounts();
                 console.log(accounts);
               
                 const balance = await web3.eth.getBalance(accounts[0]);
                 console.log("balance", web3.utils.fromWei(balance, "ether"));
-                auctionContract.methods.bid(web3.utils.keccak256(web3.eth.abi.encodeParameters(['string', 'string', 'string'],[this.state.encryptedBid, this.state.hashZokrates1, this.state.hashZokrates2]))).send({from: accounts[0],to: this.props.contractAddress, value: web3.utils.toWei('5', "ether")}, function(error, result){
+                auctionContract.methods.bid(hashBid).send({from: accounts[0],to: this.props.contractAddress, value: web3.utils.toWei('5', "ether")}, function(error, result){
                     if(!error){
                         alert("Your bid has been processed succesfully. These are the detais of your transaction");
                     }else{
                         alert("Your bid has not been processed succesfully because of the following error: " + error);
                     }
                 });
-              })().then(onClose(true));
+              })().then(onClose(true, hashBid, encryptedBid, hashZokrates1, hashZokrates2));
             
             //auctionContract.methods.bid(web3.utils.keccak256(web3.eth.abi.encodeParameters(['string', 'string', 'string'],[this.state.encryptedBid, this.state.hashZokrates1, this.state.hashZokrates2]))).send({from: accounts[0],to: this.props.contractAddress, value: 5}).then((f) => console.log(f))
             //contractInstance.bid.call()

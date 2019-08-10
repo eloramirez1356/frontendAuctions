@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+
 class ProvingProofOfWinner extends Component {
     constructor (props) {
         super(props);
@@ -32,7 +33,7 @@ class ProvingProofOfWinner extends Component {
 
     handleProvingProofOfWinner(e){
         e.preventDefault();
-        const { onClose } = this.props;
+        const { onClose, passInfo } = this.props;
         const web3 = this.props.web3;
         const parsedAbi = JSON.parse(this.props.contractAbi);
         const auctionContract = new web3.eth.Contract(parsedAbi, this.props.contractAddress);
@@ -40,30 +41,35 @@ class ProvingProofOfWinner extends Component {
         const parsedProofOfWinner = JSON.parse(this.state.proofOfWinner); 
         //const contract = web3.eth.contract(this.props.contractAbi);
         //const contractInstance = contract.at(this.props.contractAddress);
+        
         if(this.validation(this.state)){
             this.setState({showSending:true});
             (async () => {
-                console.log("Justo antes de bid prover");
-                console.log(parsedProofOfWinner.proof.a);
-                console.log(parsedProofOfWinner.proof.b);
-                console.log(parsedProofOfWinner.proof.c);
-                console.log(parsedProofOfWinner.proof.inputs);
                 const accounts = await web3.eth.getAccounts();
-                auctionContract.events.resultWinnerAndPosition((error, event) => {
+                await auctionContract.methods.auctionEnd(parsedProofOfWinner.proof.a, parsedProofOfWinner.proof.b, parsedProofOfWinner.proof.c, parsedProofOfWinner.inputs).send({from: accounts[0], gas:3000000}, function(error, result){
+                    if(!error){
+                        alert("The proof is correct: " + result);
+
+                        //console.log(auctionContract.methods.getHashesZokrates(0).call());
+                    }else{
+                        alert("The proof provided is incorrect: " + error);
+                    }
+                });
+                await auctionContract.events.resultWinnerAndPosition((error, event) => {
                     if(!error){
                         console.log("winner amount is: " + event.winnerEvent + "position is: " + event.positionEvent);
                     }else{
                         console.log(error);
                     }
                 });
-                auctionContract.methods.auctionEnd(parsedProofOfWinner.proof.a, parsedProofOfWinner.proof.b, parsedProofOfWinner.proof.c, parsedProofOfWinner.inputs).send({from: accounts[0], gas:3000000}, function(error, result){
-                    if(!error){
-                        alert("You have proved your transaction successfully and you participate in the bid " + result);
-                        //console.log(auctionContract.methods.getHashesZokrates(0).call());
-                    }else{
-                        alert("You have not proved your transaction successfully and you do not participate in the bid because of the following error: " + error);
-                    }
-                });
+                const winner = await auctionContract.methods.getWinner().call();
+                const biggest = await auctionContract.methods.getBiggestBid().call();
+                console.log(winner);
+                console.log(biggest);
+                passInfo(winner, biggest);
+                
+
+
               })().then(onClose(true));
             
             //auctionContract.methods.bid(web3.utils.keccak256(web3.eth.abi.encodeParameters(['string', 'string', 'string'],[this.state.encryptedBid, this.state.hashZokrates1, this.state.hashZokrates2]))).send({from: accounts[0],to: this.props.contractAddress, value: 5}).then((f) => console.log(f))
@@ -105,6 +111,7 @@ class ProvingProofOfWinner extends Component {
 
 ProvingProofOfWinner.propTypes = {
     onClose: PropTypes.func.isRequired,
+    passInfo: PropTypes.func.isRequired,
     web3: PropTypes.object.isRequired,
     contractAddress: PropTypes.string.isRequired,
     contractAbi: PropTypes.string.isRequired
