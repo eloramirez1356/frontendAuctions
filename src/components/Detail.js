@@ -216,7 +216,7 @@ class Detail extends Component {
                     {(account != auction.auctioneer) ? <input type="button" onClick={this.handleProvingBid} value="Prove your bid" className="detail-button"/> : null}
                     {((account == auction.auctioneer) && (!showTableWithBidsForAuctioneer)) ? <input type="button" onClick={this.retrieveBids} value="Retrieve bids" className="detail-button"/> : null }
                     {(account == auction.auctioneer) ? <input type="button" onClick={this.handleProvingProofOfWinner} value="Submit proof of Winner" className="detail-button"/> : null }
-                    {(account != auction.auctioneer && winner!='') ? <input type="button" onClick={this.handleWinnerPayment} value="Are you the winner?" className="detail-button"/> : null}
+                    {(account != auction.auctioneer) ? <input type="button" onClick={this.handleWinnerPayment} value="Are you the winner?" className="detail-button"/> : null}
                 </div>
             </div>
             
