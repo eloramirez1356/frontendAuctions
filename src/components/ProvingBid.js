@@ -36,9 +36,14 @@ class ProvingBid extends Component {
     handleProvingBid(e){
         e.preventDefault();
         const { onClose } = this.props;
+        const { bidHashedSent, encryptedBid, hashZokrates1, hashZokrates2 } = this.state;
         const web3 = this.props.web3;
         const parsedAbi = JSON.parse(this.props.contractAbi);
         const auctionContract = new web3.eth.Contract(parsedAbi, this.props.contractAddress);
+        var encryptedBidBytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(encryptedBid))),64);
+        var hashZokrates1Bytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(hashZokrates1))),64);
+        var hashZokrates2Bytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(hashZokrates2))),64);
+        var bidHashedSentBytes32 = web3.utils.toHex(bidHashedSent);
         //const contract = web3.eth.contract(this.props.contractAbi);
         //const contractInstance = contract.at(this.props.contractAddress);
         if(this.validation(this.state)){
@@ -46,7 +51,7 @@ class ProvingBid extends Component {
             (async () => {
                 console.log("Justo antes de bid prover");
                 const accounts = await web3.eth.getAccounts();
-                auctionContract.methods.bidProver(this.state.bidHashedSent, this.state.encryptedBid, this.state.hashZokrates1, this.state.hashZokrates2).send({from: accounts[0], gas:3000000}, function(error, result){
+                auctionContract.methods.bidProver(bidHashedSentBytes32, encryptedBidBytes32, hashZokrates1Bytes32, hashZokrates2Bytes32).send({from: accounts[0], gas:3000000}, function(error, result){
                     if(!error){
                         alert("You have proved your transaction successfully and you participate in the bid " + result);
                         console.log(auctionContract.methods.getHashesZokrates(0).call());

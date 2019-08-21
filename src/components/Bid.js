@@ -39,7 +39,10 @@ class Bid extends Component {
         const web3 = this.props.web3;
         const parsedAbi = JSON.parse(this.props.contractAbi);
         const auctionContract = new web3.eth.Contract(parsedAbi, this.props.contractAddress);
-        var hashBid = web3.utils.keccak256(web3.eth.abi.encodeParameters(['string', 'string', 'string'],[this.state.encryptedBid, this.state.hashZokrates1, this.state.hashZokrates2]));
+        var encryptedBidBytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(encryptedBid))),64);
+        var hashZokrates1Bytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(hashZokrates1))),64);
+        var hashZokrates2Bytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(hashZokrates2))),64);
+        var hashBid = web3.utils.keccak256(web3.eth.abi.encodeParameters(['bytes32', 'bytes32', 'bytes32'],[encryptedBidBytes32, hashZokrates1Bytes32, hashZokrates2Bytes32]));
         if(this.validation(this.state)){
             this.setState({showSending:true});
             //console.log(web3.utils.randomHex(32));
