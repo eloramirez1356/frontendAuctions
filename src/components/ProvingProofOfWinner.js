@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { async } from 'q';
+import { addWinner } from '../api';
 
 
 class ProvingProofOfWinner extends Component {
@@ -33,23 +35,20 @@ class ProvingProofOfWinner extends Component {
 
     handleProvingProofOfWinner(e){
         e.preventDefault();
-        const { onClose, passInfo } = this.props;
-        const web3 = this.props.web3;
-        const parsedAbi = JSON.parse(this.props.contractAbi);
-        const auctionContract = new web3.eth.Contract(parsedAbi, this.props.contractAddress);
+        const { onClose, contract, account } = this.props;
         console.log(this.state.proofOfWinner);
         const parsedProofOfWinner = JSON.parse(this.state.proofOfWinner); 
         
         if(this.validation(this.state)){
             this.setState({showSending:true});
             (async () => {
-                const accounts = await web3.eth.getAccounts();
-                await auctionContract.methods.auctionEnd(parsedProofOfWinner.proof.a, parsedProofOfWinner.proof.b, parsedProofOfWinner.proof.c, parsedProofOfWinner.inputs).send({from: accounts[0], gas:3000000});
-                const winner = await auctionContract.methods.getWinner().call();
-                const biggest = await auctionContract.methods.getBiggestBid().call();
-                console.log("el winner: " + winner);
-                console.log("el biggest: " + biggest);
-                passInfo(winner, biggest);
+                contract.methods.auctionEnd(parsedProofOfWinner.proof.a, parsedProofOfWinner.proof.b, parsedProofOfWinner.proof.c, parsedProofOfWinner.inputs).send({from: account, gas:3000000}, (error, result) => {
+                    if(!error){
+                        alert("The proof submited is correct and the winner has been selected: " + result);
+                    }else{
+                        alert("The proof submited is incorrect, please follow the instructions: " + error);
+                    }
+                });
               })().then(onClose(true));
         }else{
             this.setState({
@@ -80,10 +79,7 @@ class ProvingProofOfWinner extends Component {
 
 ProvingProofOfWinner.propTypes = {
     onClose: PropTypes.func.isRequired,
-    passInfo: PropTypes.func.isRequired,
-    web3: PropTypes.object.isRequired,
-    contractAddress: PropTypes.string.isRequired,
-    contractAbi: PropTypes.string.isRequired
+    contract: PropTypes.object.isRequired,
 };
 
 export default ProvingProofOfWinner;

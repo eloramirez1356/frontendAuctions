@@ -34,11 +34,9 @@ class Bid extends Component {
 
     handleBid(e){
         e.preventDefault();
-        const { onClose } = this.props;
+        const { onClose, web3 ,contract, account, contractAddress } = this.props;
         const { encryptedBid, hashZokrates1, hashZokrates2 } = this.state;
-        const web3 = this.props.web3;
-        const parsedAbi = JSON.parse(this.props.contractAbi);
-        const auctionContract = new web3.eth.Contract(parsedAbi, this.props.contractAddress);
+        const auctionContract = contract;
         var encryptedBidBytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(encryptedBid))),64);
         var hashZokrates1Bytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(hashZokrates1))),64);
         var hashZokrates2Bytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(hashZokrates2))),64);
@@ -53,14 +51,23 @@ class Bid extends Component {
               
                 const balance = await web3.eth.getBalance(accounts[0]);
                 console.log("balance", web3.utils.fromWei(balance, "ether"));
-                auctionContract.methods.bid(hashBid).send({from: accounts[0],to: this.props.contractAddress, value: web3.utils.toWei('5', "ether")}, function(error, result){
+                auctionContract.methods.bid(hashBid).send({from: account,to: contractAddress, value: web3.utils.toWei('5', "ether")}, (error, result) => {
                     if(!error){
-                        alert("Your bid has been processed succesfully. These are the detais of your transaction");
+                        const element = document.createElement("a");
+                        var jsonInfo = {bidHashedSent: hashBid, encryptedBid: encryptedBid, hashZokrates1: hashZokrates1, hashZokrates2: hashZokrates2};
+                        var blob = new Blob([JSON.stringify(jsonInfo)], {type : 'application/json'});
+                        var urlJson = URL.createObjectURL(blob);
+                        element.setAttribute("href", urlJson);
+                        element.setAttribute("download", "Proving Bid Information of " + account + ".json");
+                        document.body.appendChild(element); 
+                        element.click();
+                        alert("Your bid has been processed succesfully. These are the detais of your transaction " + result);
                     }else{
                         alert("Your bid has not been processed succesfully because of the following error: " + error);
                     }
                 });
               })().then(onClose(true, hashBid, encryptedBid, hashZokrates1, hashZokrates2));
+              
             
             //auctionContract.methods.bid(web3.utils.keccak256(web3.eth.abi.encodeParameters(['string', 'string', 'string'],[this.state.encryptedBid, this.state.hashZokrates1, this.state.hashZokrates2]))).send({from: accounts[0],to: this.props.contractAddress, value: 5}).then((f) => console.log(f))
             //contractInstance.bid.call()
@@ -96,7 +103,7 @@ class Bid extends Component {
                     <input type="text" value={hashZokrates1} onChange={this.handleChange("hashZokrates1")} minLength="3" maxLength="200" required/>
                     <label>Hash obtained from ZoKrates (part 2)</label>
                     <input type="text" value={hashZokrates2} onChange={this.handleChange("hashZokrates2")} minLength="3" maxLength="200" required/>
-                    <input type="submit" onClick={this.handleBid} value="Submit" disabled={showSending}/>
+                    <input id="submitButton" type="submit" onClick={this.handleBid} value="Submit" disabled={showSending}/>
                 </form>
             </div>
         </div>);
@@ -105,9 +112,9 @@ class Bid extends Component {
 
 Bid.propTypes = {
     onClose: PropTypes.func.isRequired,
-    web3: PropTypes.object.isRequired,
+    contract: PropTypes.object.isRequired, 
+    account: PropTypes.string.isRequired,
     contractAddress: PropTypes.string.isRequired,
-    contractAbi: PropTypes.string.isRequired
 };
 
 export default Bid;

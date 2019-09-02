@@ -38,10 +38,6 @@ class AuctioneerInterface extends Component {
     
     retrieveBids(e){
         e.preventDefault();
-        //const { auction } = this.state;
-        //const web3 = this.web3;
-        //console.log(auction);
-        //const parsedAbi = JSON.parse(auction.abi);
         const auctionContract = this.props.contract;
         var infoBids = [];
         (async () => {

@@ -50,7 +50,6 @@ class ProvingBidExplanation extends Component{
 }
 
 ProvingBidExplanation.propTypes = {
-    onClick: PropTypes.func.isRequired,
     web3: PropTypes.object.isRequired,
     contract: PropTypes.object.isRequired, 
     account: PropTypes.string.isRequired,

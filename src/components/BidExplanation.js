@@ -68,7 +68,7 @@ class BidExplanation extends Component{
 
 BidExplanation.propTypes = {
     closeModal: PropTypes.func.isRequired,
-    obtainingInfoFromBids: PropTypes.func.isRequired,
+    obtainInfoFromBid: PropTypes.func.isRequired,
     web3: PropTypes.object.isRequired,
     contract: PropTypes.object.isRequired, 
     account: PropTypes.string.isRequired,

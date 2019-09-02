@@ -22,24 +22,14 @@ class WinnerPayment extends Component {
 
     handleWinnerPayment(e){
         e.preventDefault();
-        const { onClose } = this.props;
-        const web3 = this.props.web3;
-        const parsedAbi = JSON.parse(this.props.contractAbi);
-        const auctionContract = new web3.eth.Contract(parsedAbi, this.props.contractAddress);
-        /*auctionContract.methods.getBiggestBid().call(function(err, res){
-            if(!err){
-                winnerBid = res;
-            }else{
-                console.log(err);
-            }
-            
-        });*/
+        const { onClose, web3, contract, contractAddress } = this.props;
+        const auctionContract = contract;
         this.setState({showSending:true});
             (async () => {
                 const accounts = await web3.eth.getAccounts();
                 const winnerBid = await auctionContract.methods.getBiggestBid().call();
                 console.log(winnerBid.toString());
-                auctionContract.methods.paymentOperations().send({from: accounts[0],to: this.props.contractAddress, value: web3.utils.toWei(winnerBid.toString(), "wei"), gas:3000000}, function(error, result){
+                auctionContract.methods.paymentOperations().send({from: accounts[0],to: contractAddress, value: web3.utils.toWei(winnerBid.toString(), "wei"), gas:3000000}, function(error, result){
                     if(!error){
                         alert("Congrats! You have won the auction and have paid the beneficiary correctly! This is your tx which confirms it: " + result);
                         //console.log(auctionContract.methods.getHashesZokrates(0).call());
@@ -72,8 +62,8 @@ class WinnerPayment extends Component {
 WinnerPayment.propTypes = {
     onClose: PropTypes.func.isRequired,
     web3: PropTypes.object.isRequired,
+    contract: PropTypes.object.isRequired,
     contractAddress: PropTypes.string.isRequired,
-    contractAbi: PropTypes.string.isRequired
 };
 
 export default WinnerPayment;
