@@ -75,8 +75,8 @@ class List extends Component {
             <div className="container">
                 <div className="grid-container">
                     {
-                        auctions && auctions.map((video,i) => {
-                            return (<Item key={i} data={video}/>)
+                        auctions && auctions.map((auction,i) => {
+                            return (<Item key={i} data={auction}/>)
                         })
                     }
                 </div>

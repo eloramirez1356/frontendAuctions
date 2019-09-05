@@ -52,7 +52,7 @@ class WinnerPayment extends Component {
                 { hasError && (<div className="error"> Some fields are empty or contain an wrong values. </div>)}
                 <form>
                     <label>You Are The Winner of the bid!</label>
-                    <input type="submit" onClick={this.handleWinnerPayment} value="Submit" disabled={showSending}/>
+                    <input type="submit" onClick={this.handleWinnerPayment} value="Check if you won" disabled={showSending}/>
                 </form>
             </div>
         </div>);

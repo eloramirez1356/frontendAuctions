@@ -35,8 +35,7 @@ class ProvingBidExplanation extends Component{
             <React.Fragment>
             <div>
                 <h4><i>Proving your Bid:</i></h4>
-                <p>In this step you will have to provide the data provided in the bidding period, concretely the hashed bid, the encrypted bid and
-                    the two parts of the ZoKrates hash.
+                <p>In this step you must provide the data provided in the bidding period, concretely the content of the JSON obtained after the bid.
                 </p>
                 <input type="button" onClick={this.handleProvingBid} value="Prove your bid" className="detail-button"/>
 

@@ -37,7 +37,7 @@ class ProvingBid extends Component {
         const { proofOfBid } = this.state;
         const auctionContract = contract;
         const parsedProofOfBid = JSON.parse(proofOfBid);
-        var encryptedBidBytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(parsedProofOfBid.encryptedBid))),64);
+        var encryptedBidBytes32 = web3.utils.padLeft((web3.utils.utf8ToHex(parsedProofOfBid.encryptedBid)),64);
         var hashZokrates1Bytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(parsedProofOfBid.hashZokrates1))),64);
         var hashZokrates2Bytes32 = web3.utils.padLeft((web3.utils.toHex(web3.utils.toBN(parsedProofOfBid.hashZokrates2))),64);
         var bidHashedSentBytes32 = web3.utils.toHex(parsedProofOfBid.bidHashedSent);
@@ -87,7 +87,7 @@ class ProvingBid extends Component {
                 { showSending && (<span className="success"> Enviando... </span>)}
                 { hasError && (<div className="error"> Some fields are empty or contain an wrong values. </div>)}
                 <form>
-                    <label>Information for proving your bid</label>
+                    <label>Information from your JSON for proving your bid</label>
                     <input type="text" value={proofOfBid} onChange={this.handleProvingChange("proofOfBid")} minLength="3" maxLength="2000" required/>
                     <input type="submit" onClick={this.handleProvingBid} value="Submit" disabled={showSending}/>
                 </form>

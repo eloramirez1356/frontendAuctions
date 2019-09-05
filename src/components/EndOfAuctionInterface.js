@@ -31,14 +31,14 @@ class EndOfAuctionInterface extends Component{
     }
 
     render(){
-        const {web3, contract, contractAddress, winner, winnerBid} = this.props;
+        const {web3, contract, contractAddress, winner, winnerBid, account} = this.props;
         const {showWinnerPaymentModal} = this.state;
         return(
             <React.Fragment>
             <div>
                 <label>The winner address is: </label><p>{winner} bidding the amount of {winnerBid} Ethers</p>
             </div>
-            <input type="button" onClick={this.handleWinnerPayment} value="Are you the winner?" className="detail-button"/>
+            {(winner == account) ? <input type="button" onClick={this.handleWinnerPayment} value="Are you the winner?" className="detail-button"/> : null}
             { showWinnerPaymentModal && (<WinnerPayment onClose={this.handleCloseWinnerPayment} web3={web3} contractAddress={contractAddress} contract={contract}/>)}
             </React.Fragment>
         );

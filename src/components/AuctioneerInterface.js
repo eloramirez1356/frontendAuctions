@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import TableWithBids from './TableWithBids';
 import ProvingProofOfWinner from './ProvingProofOfWinner';
+import NodeRSA from 'node-rsa';
 
 class AuctioneerInterface extends Component {
     constructor (props){
@@ -10,11 +11,14 @@ class AuctioneerInterface extends Component {
             hasError:false,
             showTableWithBidsForAuctioneer:false,
             showProvingProofOfWinnerModal:false,
+            privateKeySet:false,
             allInfoBids:'',
+            privateKey:'',
         }
         this.retrieveBids = this.retrieveBids.bind(this);
         this.handleProvingProofOfWinner = this.handleProvingProofOfWinner.bind(this);
         this.handleCloseProvingProofOfWinnerModal = this.handleCloseProvingProofOfWinnerModal.bind(this);
+        this.handlePrivateKey = this.handlePrivateKey.bind(this);
     }
 
 
@@ -35,10 +39,28 @@ class AuctioneerInterface extends Component {
         }
     }
 
+    handleProvingChange (field){
+        return (event) => {
+            this.setState({
+                [field]: event.target.value
+            })
+        }
+    }
+
+    handlePrivateKey(e){
+        e.preventDefault();
+        this.setState({
+            privateKeySet: true
+        });
+    }
+
     
     retrieveBids(e){
         e.preventDefault();
+        const {web3} = this.props;
         const auctionContract = this.props.contract;
+        const {privateKey} = this.state;
+        const privateKeyRsa = new NodeRSA(privateKey);
         var infoBids = [];
         (async () => {
             var i;
@@ -46,17 +68,25 @@ class AuctioneerInterface extends Component {
                 const encryptedBid = await auctionContract.methods.getBidAmounts(i).call();
                 const hashes = await auctionContract.methods.getHashesZokrates(i).call();
                 console.log(encryptedBid);
+                console.log("Decripted: " + web3.utils.hexToUtf8(encryptedBid));
                 console.log(hashes);
-                infoBids.push({bidder:"Bidder" + i+1,encryptedBid:encryptedBid, hashBid1:hashes[0], hashBid2:hashes[1]});
+                infoBids.push({bidder:"Bidder" + i+1, clearBid:privateKeyRsa.decrypt(web3.utils.hexToUtf8(encryptedBid), 'utf8'), hashBid1:web3.utils.toBN(hashes[0]).toString(), hashBid2:web3.utils.toBN(hashes[1]).toString()});
             }
             const infoBids2 = await Promise.all(infoBids);
             this.setState({allInfoBids:infoBids2, showTableWithBidsForAuctioneer:true});
+
+            const element = document.createElement("a");
+            const file = new Blob(['./zokrates compute-witness -a ' + infoBids2[0].clearBid + " " + infoBids2[1].clearBid + " " + infoBids2[2].clearBid + " " + infoBids2[3].clearBid + " " + infoBids2[0].hashBid1 + " " + infoBids2[0].hashBid2 + " " + infoBids2[1].hashBid1 + " " + infoBids2[1].hashBid2 + " " + infoBids2[2].hashBid1 + " " + infoBids2[2].hashBid2 + " " + infoBids2[3].hashBid1 + " " + infoBids2[3].hashBid2], {type: 'text/plain'});
+            element.href = URL.createObjectURL(file);
+            element.download = "commandZokrates.txt";
+            document.body.appendChild(element); // Required for this to work in FireFox
+            element.click();
 
           })().then();
     }
 
     render(){
-        const {showTableWithBidsForAuctioneer, allInfoBids} = this.state;
+        const {showTableWithBidsForAuctioneer, allInfoBids, privateKey, privateKeySet} = this.state;
         return(<React.Fragment>
             <div>
                 <h4><i>Procedure for determining the winner:</i></h4>
@@ -70,9 +100,11 @@ class AuctioneerInterface extends Component {
 
                 <p>If you have errors you must to generate another proof repeat the process</p>
 
-                {(showTableWithBidsForAuctioneer) ? (<TableWithBids retrievedBids={allInfoBids}/>) : null}
-                {(!showTableWithBidsForAuctioneer) ? <input type="button" onClick={this.retrieveBids} value="Retrieve bids" className="detail-button"/> : null }
-                <input type="button" onClick={this.handleProvingProofOfWinner} value="Submit proof of Winner" className="detail-button"/>
+                {(showTableWithBidsForAuctioneer) && privateKeySet ? (<TableWithBids retrievedBids={allInfoBids}/>) : null}
+                {(!showTableWithBidsForAuctioneer) && privateKeySet ? <input type="button" onClick={this.retrieveBids} value="Retrieve bids" className="detail-button"/> : null }
+                {(privateKeySet) ? <input type="button" onClick={this.handleProvingProofOfWinner} value="Submit proof of Winner" className="detail-button"/> : null}
+                {(!privateKeySet) ? <input type="text" value={privateKey} onChange={this.handleProvingChange("privateKey")} minLength="3" maxLength="2000" required/> : null}
+                {(!privateKeySet) ? <input type="button" onClick={this.handlePrivateKey} value="Add private key" className="detail-button"/> : null}
 
             </div>
 

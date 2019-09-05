@@ -34,7 +34,7 @@ class BidExplanation extends Component{
 
 
     render(){
-        const {web3, contract, account, contractAddress} = this.props;
+        const {web3, contract, account, contractAddress, publicKey} = this.props;
         const {showBidModal} = this.state;
         return(
             <React.Fragment>
@@ -42,7 +42,7 @@ class BidExplanation extends Component{
                 <h4><i>Bidding procedure:</i></h4>
                 <ol>
                     <li>Click in the Bid button during the period established for bidding.</li>
-                    <li>Fill the Encrypted bid field with your encrypted bid</li>
+                    <li>Introduce your bid</li>
                     <li>Introduce the hashed values in the last two fields, obtained from the execution of ZoKrates (Detailed explanation clickin in ZoKrates Explanation Button)</li>
                 </ol>
 
@@ -58,7 +58,7 @@ class BidExplanation extends Component{
                 <input type="button" onClick={this.handleBid} value="Bid" className="detail-button"/>
 
             </div>
-            { showBidModal && (<Bid onClose={this.handleCloseBid} web3={web3} contract={contract} account={account} contractAddress={contractAddress}/>)}
+            { showBidModal && (<Bid onClose={this.handleCloseBid} web3={web3} contract={contract} account={account} contractAddress={contractAddress} publicKey={publicKey}/>)}
             </React.Fragment>
         );
     }
